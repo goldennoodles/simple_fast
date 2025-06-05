@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import MoodTracker from './components/MoodTracker';
-import FastingTimer from './components/FastingTimer';
+import FastingTimer from './components/FastingTimer/FastingTimer';
 import FastingHistory from './components/FastingHistory';
 
 interface FastingSession {
@@ -73,7 +73,7 @@ const App: React.FC = () => {
         marginBottom: '1rem',
         color: '#2c3e50',
         width: '100%',
-      }}>Fasting App</h1>
+      }}>SimpleFast</h1>
       <FastingTimer
         isFasting={isFasting}
         startTime={startTime}
