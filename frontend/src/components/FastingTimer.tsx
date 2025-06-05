@@ -123,6 +123,11 @@ const FastingTimer: React.FC<FastingTimerProps> = ({
           {formatTime(elapsedSeconds)}
         </text>
       </svg>
+      {isFasting && elapsedSeconds > fastingDurationSeconds && (
+        <div style={{ color: 'red', fontWeight: 'bold', marginTop: '0.5rem' }}>
+          {formatTime(elapsedSeconds - fastingDurationSeconds)}+
+        </div>
+      )}
       {!isFasting && (
         <div style={{ marginBottom: '1rem' }}>
           <label htmlFor="fast-duration" style={{ marginRight: '0.5rem' }}>
