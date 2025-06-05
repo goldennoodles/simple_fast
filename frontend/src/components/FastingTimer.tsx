@@ -78,7 +78,7 @@ const FastingTimer: React.FC<FastingTimerProps> = ({
   };
 
   // Calculate progress percentage for progress bar
-  const progressPercent = fastingDurationSeconds
+  const progressPercent = fastingDurationSeconds && fastingDurationSeconds > 0
     ? Math.min((elapsedSeconds / fastingDurationSeconds) * 100, 100)
     : 0;
 
@@ -111,6 +111,7 @@ const FastingTimer: React.FC<FastingTimerProps> = ({
           }
           strokeLinecap="round"
           transform="rotate(-90 50 50)"
+          style={{ transition: 'stroke-dashoffset 0.5s ease', stroke: '#4caf50' }}
         />
         <text
           x="50"

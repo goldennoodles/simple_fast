@@ -16,9 +16,12 @@ const App: React.FC = () => {
   const [selectedMood, setSelectedMood] = useState<string | null>(null);
   const [sessions, setSessions] = useState<FastingSession[]>([]);
 
-  const handleStart = (time: Date) => {
+  const [currentFastingDurationSeconds, setCurrentFastingDurationSeconds] = useState<number | null>(null);
+
+  const handleStart = (time: Date, durationSeconds: number) => {
     setIsFasting(true);
     setStartTime(time);
+    setCurrentFastingDurationSeconds(durationSeconds);
     setSelectedMood(null);
   };
 
@@ -33,6 +36,7 @@ const App: React.FC = () => {
     setSessions([newSession, ...sessions]);
     setStartTime(null);
     setSelectedMood(null);
+    setCurrentFastingDurationSeconds(null);
   };
 
   const handleMoodSelect = (mood: string) => {
@@ -67,11 +71,14 @@ const App: React.FC = () => {
       <FastingTimer
         isFasting={isFasting}
         startTime={startTime}
-        fastingDurationSeconds={isFasting && startTime ? sessions.length > 0 && sessions[0].startTime === startTime ? (sessions[0].endTime ? Math.floor((new Date(sessions[0].endTime).getTime() - new Date(sessions[0].startTime).getTime()) / 1000) : 0) : 0 : 0}
+        fastingDurationSeconds={isFasting ? currentFastingDurationSeconds ?? 0 : 0}
         onStart={handleStart}
         onEnd={handleEnd}
       />
-      <div style={{ minHeight: '120px', width: '100%', maxHeight: 'none', overflow: 'visible' }}>
+      <div style={{ flexGrow: 1, width: '100%', overflowY: 'auto', marginTop: isFasting ? '120px' : '1rem', transition: 'margin-top 0.5s ease' }}>
+        <FastingHistory sessions={sessions} />
+      </div>
+      <div style={{ minHeight: '120px', width: '100%', maxHeight: 'none', overflow: 'visible', position: isFasting ? 'relative' : 'absolute', top: isFasting ? '0' : '-120px', transition: 'top 0.5s ease' }}>
         {isFasting && (
           <>
             <h3
@@ -90,9 +97,6 @@ const App: React.FC = () => {
             <MoodTracker selectedMood={selectedMood} onMoodSelect={handleMoodSelect} />
           </>
         )}
-      </div>
-      <div style={{ flexGrow: 1, width: '100%', overflowY: 'auto', marginTop: '1rem' }}>
-        <FastingHistory sessions={sessions} />
       </div>
     </div>
   );
