@@ -1,5 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
-import type { ChangeEvent } from 'react';
+import React, { useState, useEffect, useRef, type ChangeEvent } from 'react';
 
 interface FastingTimerProps {
   onStart: (startTime: Date, durationSeconds: number) => void;
@@ -17,8 +16,29 @@ const FastingTimer: React.FC<FastingTimerProps> = ({
   fastingDurationSeconds,
 }) => {
   const [elapsedSeconds, setElapsedSeconds] = useState(0);
-  const [inputDuration, setInputDuration] = useState('08:00'); // default 8 hours in HH:mm format
+  const [inputDuration, setInputDuration] = useState('08:00:00'); // default 8 hours in HH:mm:ss format
   const intervalRef = useRef<number | null>(null);
+
+  const parseDuration = (durationStr: string) => {
+    const parts = durationStr.split(':').map(Number);
+    if (parts.length === 3) {
+      return parts[0] * 3600 + parts[1] * 60 + parts[2];
+    } else if (parts.length === 2) {
+      return parts[0] * 3600 + parts[1] * 60;
+    } else if (parts.length === 1) {
+      return parts[0] * 3600;
+    }
+    return 0;
+  };
+
+  const formatTime = (totalSeconds: number) => {
+    const hours = Math.floor(totalSeconds / 3600);
+    const minutes = Math.floor((totalSeconds % 3600) / 60);
+    const seconds = totalSeconds % 60;
+    return `${hours.toString().padStart(2, '0')}:${minutes
+      .toString()
+      .padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+  };
 
   useEffect(() => {
     if (isFasting && startTime) {
@@ -44,18 +64,8 @@ const FastingTimer: React.FC<FastingTimerProps> = ({
     };
   }, [isFasting, startTime]);
 
-  const formatTime = (totalSeconds: number) => {
-    const hours = Math.floor(totalSeconds / 3600);
-    const minutes = Math.floor((totalSeconds % 3600) / 60);
-    const seconds = totalSeconds % 60;
-    return `${hours.toString().padStart(2, '0')}:${minutes
-      .toString()
-      .padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
-  };
-
   const handleStartClick = () => {
-    const [hours, minutes] = inputDuration.split(':').map(Number);
-    const durationSeconds = hours * 3600 + minutes * 60;
+    const durationSeconds = parseDuration(inputDuration);
     onStart(new Date(), durationSeconds);
   };
 
@@ -115,15 +125,16 @@ const FastingTimer: React.FC<FastingTimerProps> = ({
       {!isFasting && (
         <div style={{ marginBottom: '1rem' }}>
           <label htmlFor="fast-duration" style={{ marginRight: '0.5rem' }}>
-            Fast Duration (HH:mm):
+            Fast Duration (HH:mm:ss):
           </label>
           <input
             id="fast-duration"
-            type="time"
-            step="60"
+            type="text"
+            pattern="^\\d{1,3}(:[0-5]\\d){0,2}$"
+            placeholder="e.g. 48:00:00"
             value={inputDuration}
             onChange={handleDurationChange}
-            style={{ fontSize: '1rem', padding: '0.25rem' }}
+            style={{ fontSize: '1rem', padding: '0.25rem', width: '120px', textAlign: 'center' }}
           />
         </div>
       )}
