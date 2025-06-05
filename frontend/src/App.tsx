@@ -75,28 +75,41 @@ const App: React.FC = () => {
         onStart={handleStart}
         onEnd={handleEnd}
       />
-      <div style={{ flexGrow: 1, width: '100%', overflowY: 'auto', marginTop: isFasting ? '120px' : '1rem', transition: 'margin-top 0.5s ease' }}>
-        <FastingHistory sessions={sessions} />
-      </div>
-      <div style={{ minHeight: '120px', width: '100%', maxHeight: 'none', overflow: 'visible', position: isFasting ? 'relative' : 'absolute', top: isFasting ? '0' : '-120px', transition: 'top 0.5s ease' }}>
-        {isFasting && (
-          <>
-            <h3
-              style={{
-                textAlign: 'center',
-                fontWeight: '600',
-                fontSize: '1.1rem',
-                marginTop: '1rem',
-                marginBottom: '0.25rem',
-                color: '#34495e',
-                width: '100%',
-              }}
-            >
-              How are you feeling?
-            </h3>
-            <MoodTracker selectedMood={selectedMood} onMoodSelect={handleMoodSelect} />
-          </>
-        )}
+
+      <div style={{ flexGrow: 1, width: '100%', overflowY: 'auto' }}>
+        <div
+          className="emoji-animate emoji-visible"
+          style={{
+            transition: 'opacity 0.5s ease, max-height 0.5s ease, padding 0.5s ease',
+            opacity: isFasting ? 1 : 0,
+            maxHeight: isFasting ? '200px' : '0',
+            overflow: 'hidden',
+            padding: isFasting ? '1rem 0' : '0',
+            width: '100%',
+          }}
+        >
+          <h3
+            style={{
+              textAlign: 'center',
+              fontWeight: '600',
+              fontSize: '1.1rem',
+              marginTop: '1rem',
+              marginBottom: '0.25rem',
+              color: '#34495e',
+              width: '100%',
+            }}
+          >
+            How are you feeling?
+          </h3>
+          <MoodTracker selectedMood={selectedMood} onMoodSelect={handleMoodSelect} />
+        </div>
+
+        <div
+          className={`history-animate ${isFasting ? 'history-down' : 'history-up'}`}
+          style={{ transition: 'margin-top 0.5s cubic-bezier(0.4,0,0.2,1)', marginTop: isFasting ? '10px' : '0' }}
+        >
+          <FastingHistory sessions={sessions} />
+        </div>
       </div>
     </div>
   );
