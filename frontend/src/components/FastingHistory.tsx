@@ -5,6 +5,7 @@ interface FastingSession {
     startTime: Date;
     endTime: Date | null;
     mood: string | null;
+    goalDurationSeconds?: number;
 }
 
 interface FastingHistoryProps {
@@ -28,6 +29,12 @@ const FastingHistory: React.FC<FastingHistoryProps> = ({ sessions, onDeleteSessi
             onDeleteSession(confirmDeleteId);
             closeConfirmDialog();
         }
+    };
+
+    const formatDuration = (totalSeconds: number) => {
+        const hours = Math.floor(totalSeconds / 3600);
+        const minutes = Math.floor((totalSeconds % 3600) / 60);
+        return `${hours}h ${minutes}m`;
     };
 
     return (
@@ -65,12 +72,6 @@ const FastingHistory: React.FC<FastingHistoryProps> = ({ sessions, onDeleteSessi
                                 1000
                             )
                             : null;
-
-                        const formatDuration = (totalSeconds: number) => {
-                            const hours = Math.floor(totalSeconds / 3600);
-                            const minutes = Math.floor((totalSeconds % 3600) / 60);
-                            return `${hours}h ${minutes}m`;
-                        };
 
                         return (
                             <li
@@ -127,7 +128,9 @@ const FastingHistory: React.FC<FastingHistoryProps> = ({ sessions, onDeleteSessi
                                     <span>Duration:</span>
                                     <span>
                                         {durationSeconds !== null
-                                            ? formatDuration(durationSeconds)
+                                            ? session.goalDurationSeconds !== undefined
+                                                ? `${formatDuration(durationSeconds)} / ${formatDuration(session.goalDurationSeconds)}`
+                                                : formatDuration(durationSeconds)
                                             : 'In progress'}
                                     </span>
                                 </div>

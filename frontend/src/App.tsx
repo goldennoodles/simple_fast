@@ -8,6 +8,7 @@ interface FastingSession {
   startTime: Date;
   endTime: Date | null;
   mood: string | null;
+  goalDurationSeconds?: number;
 }
 
 const App: React.FC = () => {
@@ -32,6 +33,7 @@ const App: React.FC = () => {
       startTime: startTime || time,
       endTime: time,
       mood: selectedMood,
+      goalDurationSeconds: currentFastingDurationSeconds ?? undefined,
     };
     setSessions([newSession, ...sessions]);
     setStartTime(null);
