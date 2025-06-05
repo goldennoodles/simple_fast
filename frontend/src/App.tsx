@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { Storage } from '@capacitor/storage';
+import { Preferences } from '@capacitor/preferences';
+import { LocalNotifications } from '@capacitor/local-notifications';
 import MoodTracker from './components/MoodTracker';
 import FastingTimer from './components/FastingTimer/FastingTimer';
 import FastingHistory from './components/FastingHistory';
@@ -39,7 +40,7 @@ const App: React.FC = () => {
   useEffect(() => {
     const loadState = async () => {
       try {
-        const result = await Storage.get({ key: STORAGE_KEY });
+        const result = await Preferences.get({ key: STORAGE_KEY });
         if (result.value) {
           const savedState: AppState = JSON.parse(result.value);
           setIsFasting(savedState.isFasting);
@@ -78,7 +79,7 @@ const App: React.FC = () => {
           })),
           currentFastingDurationSeconds,
         };
-        await Storage.set({ key: STORAGE_KEY, value: JSON.stringify(stateToSave) });
+        await Preferences.set({ key: STORAGE_KEY, value: JSON.stringify(stateToSave) });
       } catch (error) {
         console.error('Failed to save app state:', error);
       }
@@ -93,7 +94,7 @@ const App: React.FC = () => {
     setSelectedMood(null);
   };
 
-  const handleEnd = (time: Date) => {
+  const handleEnd = async (time: Date) => {
     setIsFasting(false);
     const newSession: FastingSession = {
       id: sessions.length + 1,
