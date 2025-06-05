@@ -21,7 +21,7 @@ const FastingTimer: React.FC<FastingTimerProps> = ({
     fastingDurationSeconds,
 }) => {
     const [elapsedSeconds, setElapsedSeconds] = useState(0);
-    const [inputDuration, setInputDuration] = useState('08:00'); // default 8 hours in HH:mm format
+    const [inputDuration, setInputDuration] = useState('48:00'); // default 8 hours in HH:mm format
     const intervalRef = useRef<number | null>(null);
 
     useEffect(() => {
@@ -85,28 +85,28 @@ const FastingTimer: React.FC<FastingTimerProps> = ({
                     <button
                         type="button"
                         onClick={() => handleDurationChange('08:00')}
-                        style={{ padding: '0.5rem 1rem', cursor: 'pointer' }}
+                        style={{ padding: '0.5rem 1rem', cursor: 'pointer', backgroundColor: '#66bb6a', color: 'white', border: 'none', borderRadius: '4px' }}
                     >
                         8h
                     </button>
                     <button
                         type="button"
                         onClick={() => handleDurationChange('16:00')}
-                        style={{ padding: '0.5rem 1rem', cursor: 'pointer' }}
+                        style={{ padding: '0.5rem 1rem', cursor: 'pointer', backgroundColor: '#66bb6a', color: 'white', border: 'none', borderRadius: '4px' }}
                     >
                         16h
                     </button>
                     <button
                         type="button"
                         onClick={() => handleDurationChange('24:00')}
-                        style={{ padding: '0.5rem 1rem', cursor: 'pointer' }}
+                        style={{ padding: '0.5rem 1rem', cursor: 'pointer', backgroundColor: '#66bb6a', color: 'white', border: 'none', borderRadius: '4px' }}
                     >
                         24h
                     </button>
                     <button
                         type="button"
                         onClick={() => handleDurationChange('48:00')}
-                        style={{ padding: '0.5rem 1rem', cursor: 'pointer' }}
+                        style={{ padding: '0.5rem 1rem', cursor: 'pointer', backgroundColor: '#66bb6a', color: 'white', border: 'none', borderRadius: '4px' }}
                     >
                         48h
                     </button>
