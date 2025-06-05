@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">SimpleFast</string>
+    <string name="title_activity_main">SimpleFast</string>
+    <string name="package_name">com.rus.simplefast</string>
+    <string name="custom_url_scheme">com.rus.simplefast</string>
+</resources>

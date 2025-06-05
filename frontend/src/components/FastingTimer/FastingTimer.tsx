@@ -66,16 +66,18 @@ const FastingTimer: React.FC<FastingTimerProps> = ({
         ? Math.min((elapsedSeconds / fastingDurationSeconds) * 100, 100)
         : 0;
 
+    const isOverGoal = isFasting && elapsedSeconds > fastingDurationSeconds;
+
     return (
         <div style={{ textAlign: 'center', padding: '1rem', position: 'relative' }}>
-            <TimerDisplay elapsedSeconds={elapsedSeconds} progressPercent={progressPercent} />
-            {isFasting && elapsedSeconds > fastingDurationSeconds && (
+            <TimerDisplay elapsedSeconds={elapsedSeconds} progressPercent={progressPercent} isOverGoal={isOverGoal} />
+            {isOverGoal && (
                 <OverDurationDisplay overSeconds={elapsedSeconds - fastingDurationSeconds} />
             )}
             {!isFasting && (
                 <DurationInput inputDuration={inputDuration} onDurationChange={handleDurationChange} />
             )}
-            <ActionButton isFasting={isFasting} onStartClick={handleStartClick} onEndClick={handleEndClick} />
+            <ActionButton isFasting={isFasting} onStartClick={handleStartClick} onEndClick={handleEndClick} isOverGoal={isOverGoal} />
         </div>
     );
 };

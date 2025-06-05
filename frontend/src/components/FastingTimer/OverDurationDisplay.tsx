@@ -6,7 +6,7 @@ interface OverDurationDisplayProps {
 }
 
 const OverDurationDisplay: React.FC<OverDurationDisplayProps> = ({ overSeconds }) => (
-    <div style={{ color: 'red', fontWeight: 'bold', marginTop: '0.5rem' }}>
+    <div style={{ color: '#2196f3', fontWeight: 'bold', marginTop: '0.5rem' }}>
         {formatTime(overSeconds)}+
     </div>
 );
