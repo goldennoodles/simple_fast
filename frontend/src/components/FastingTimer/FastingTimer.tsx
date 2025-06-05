@@ -4,6 +4,7 @@ import OverDurationDisplay from './OverDurationDisplay';
 import DurationInput from './DurationInput';
 import ActionButton from './ActionButton';
 import { parseDuration } from '../../utils/time';
+import { LocalNotifications } from '@capacitor/local-notifications';
 
 interface FastingTimerProps {
     onStart: (startTime: Date, durationSeconds: number) => void;
@@ -23,6 +24,40 @@ const FastingTimer: React.FC<FastingTimerProps> = ({
     const [elapsedSeconds, setElapsedSeconds] = useState(0);
     const [inputDuration, setInputDuration] = useState('48:00'); // default 8 hours in HH:mm format
     const intervalRef = useRef<number | null>(null);
+    const notificationId = 1;
+
+    async function requestNotificationPermission() {
+        const permission = await LocalNotifications.requestPermissions();
+        if (permission.display === 'granted') {
+            return true;
+        } else {
+            console.warn('Notification permission not granted');
+            return false;
+        }
+    }
+
+    async function scheduleNotification(startTime: Date, durationSeconds: number) {
+        const notifyTime = new Date(startTime.getTime() + durationSeconds * 1000);
+        await LocalNotifications.schedule({
+            notifications: [
+                {
+                    id: notificationId,
+                    title: 'Fasting Goal Reached!',
+                    body: 'Congratulations, you have met your fasting goal.',
+                    schedule: { at: notifyTime },
+
+                    sound: undefined,
+                    attachments: undefined,
+                    actionTypeId: '',
+                    extra: undefined,
+                },
+            ],
+        });
+    }
+
+    async function cancelNotification() {
+        await LocalNotifications.cancel({ notifications: [{ id: notificationId }] });
+    }
 
     function formatGoalDuration(seconds: number) {
         const h = Math.floor(seconds / 3600);
@@ -53,6 +88,18 @@ const FastingTimer: React.FC<FastingTimerProps> = ({
             }
         };
     }, [isFasting, startTime]);
+
+    useEffect(() => {
+        if (isFasting && startTime && fastingDurationSeconds > 0) {
+            requestNotificationPermission().then((granted) => {
+                if (granted) {
+                    scheduleNotification(startTime, fastingDurationSeconds);
+                }
+            });
+        } else {
+            cancelNotification();
+        }
+    }, [isFasting, startTime, fastingDurationSeconds]);
 
     const handleStartClick = () => {
         const durationSeconds = parseDuration(inputDuration);
