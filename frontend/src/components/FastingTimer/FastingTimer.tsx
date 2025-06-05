@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, type ChangeEvent } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import TimerDisplay from './TimerDisplay';
 import OverDurationDisplay from './OverDurationDisplay';
 import DurationInput from './DurationInput';
@@ -21,7 +21,7 @@ const FastingTimer: React.FC<FastingTimerProps> = ({
     fastingDurationSeconds,
 }) => {
     const [elapsedSeconds, setElapsedSeconds] = useState(0);
-    const [inputDuration, setInputDuration] = useState('08:00:00'); // default 8 hours in HH:mm:ss format
+    const [inputDuration, setInputDuration] = useState('08:00'); // default 8 hours in HH:mm format
     const intervalRef = useRef<number | null>(null);
 
     useEffect(() => {
@@ -57,8 +57,8 @@ const FastingTimer: React.FC<FastingTimerProps> = ({
         onEnd(new Date());
     };
 
-    const handleDurationChange = (e: ChangeEvent<HTMLInputElement>) => {
-        setInputDuration(e.target.value);
+    const handleDurationChange = (duration: string) => {
+        setInputDuration(duration);
     };
 
     // Calculate progress percentage for progress bar
@@ -75,9 +75,43 @@ const FastingTimer: React.FC<FastingTimerProps> = ({
                 <OverDurationDisplay overSeconds={elapsedSeconds - fastingDurationSeconds} />
             )}
             {!isFasting && (
-                <DurationInput inputDuration={inputDuration} onDurationChange={handleDurationChange} />
+                <>
+                    <DurationInput inputDuration={inputDuration} onDurationChange={handleDurationChange} />
+                </>
             )}
             <ActionButton isFasting={isFasting} onStartClick={handleStartClick} onEndClick={handleEndClick} isOverGoal={isOverGoal} />
+            {!isFasting && (
+                <div style={{ marginTop: '1rem', display: 'flex', justifyContent: 'center', gap: '0.5rem' }}>
+                    <button
+                        type="button"
+                        onClick={() => handleDurationChange('08:00')}
+                        style={{ padding: '0.5rem 1rem', cursor: 'pointer' }}
+                    >
+                        8h
+                    </button>
+                    <button
+                        type="button"
+                        onClick={() => handleDurationChange('16:00')}
+                        style={{ padding: '0.5rem 1rem', cursor: 'pointer' }}
+                    >
+                        16h
+                    </button>
+                    <button
+                        type="button"
+                        onClick={() => handleDurationChange('24:00')}
+                        style={{ padding: '0.5rem 1rem', cursor: 'pointer' }}
+                    >
+                        24h
+                    </button>
+                    <button
+                        type="button"
+                        onClick={() => handleDurationChange('48:00')}
+                        style={{ padding: '0.5rem 1rem', cursor: 'pointer' }}
+                    >
+                        48h
+                    </button>
+                </div>
+            )}
         </div>
     );
 };
