@@ -18,12 +18,13 @@ const MoodTracker: React.FC<MoodTrackerProps> = ({ onMoodSelect, selectedMood })
         <div
             style={{
                 display: 'flex',
-                justifyContent: 'space-around',
+                justifyContent: 'space-between',
                 padding: '1rem',
                 backgroundColor: '#e3f2fd',
                 borderRadius: '12px',
                 boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
-                margin: '0 1rem',
+                marginTop: '1rem',
+                gap: '0.3rem',
             }}
         >
             {moodEmojis.map(({ label, emoji }) => (
@@ -31,13 +32,12 @@ const MoodTracker: React.FC<MoodTrackerProps> = ({ onMoodSelect, selectedMood })
                     key={label}
                     onClick={() => onMoodSelect(label)}
                     style={{
-                        fontSize: '2.5rem',
+                        fontSize: 'clamp(1rem, 4vw, 2rem)',
                         backgroundColor: selectedMood === label ? '#90caf9' : 'transparent',
-                        border: '2px solid',
                         borderColor: selectedMood === label ? '#42a5f5' : 'transparent',
                         cursor: 'pointer',
-                        padding: '0.75rem',
-                        borderRadius: '50%',
+                        padding: '0.3rem',
+                        borderRadius: '40%',
                         transition: 'background-color 0.3s, border-color 0.3s',
                         boxShadow: selectedMood === label ? '0 0 8px #42a5f5' : 'none',
                     }}

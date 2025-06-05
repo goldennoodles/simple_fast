@@ -140,6 +140,7 @@ const App: React.FC = () => {
           textAlign: 'center',
           fontWeight: '700',
           fontSize: '2.5rem',
+          marginTop: '4rem',
           marginBottom: '1rem',
           color: '#2c3e50',
           width: '100%',
