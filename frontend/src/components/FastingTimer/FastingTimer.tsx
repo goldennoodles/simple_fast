@@ -24,6 +24,12 @@ const FastingTimer: React.FC<FastingTimerProps> = ({
     const [inputDuration, setInputDuration] = useState('48:00'); // default 8 hours in HH:mm format
     const intervalRef = useRef<number | null>(null);
 
+    function formatGoalDuration(seconds: number) {
+        const h = Math.floor(seconds / 3600);
+        const m = Math.floor((seconds % 3600) / 60);
+        return `${h}h${m > 0 ? ` ${m}m` : ''}`;
+    }
+
     useEffect(() => {
         if (isFasting && startTime) {
             const updateElapsed = () => {
@@ -78,6 +84,11 @@ const FastingTimer: React.FC<FastingTimerProps> = ({
                 <>
                     <DurationInput inputDuration={inputDuration} onDurationChange={handleDurationChange} />
                 </>
+            )}
+            {isFasting && (
+                <div style={{ fontSize: '0.85rem', color: '#888', marginBottom: '0.25rem' }}>
+                    Goal: {formatGoalDuration(fastingDurationSeconds)}
+                </div>
             )}
             <ActionButton isFasting={isFasting} onStartClick={handleStartClick} onEndClick={handleEndClick} isOverGoal={isOverGoal} />
             {!isFasting && (
