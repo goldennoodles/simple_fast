@@ -23,7 +23,7 @@ const MoodTracker: React.FC<MoodTrackerProps> = ({ onMoodSelect, selectedMood })
                 backgroundColor: '#e3f2fd',
                 borderRadius: '12px',
                 boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
-                marginTop: '1rem',
+                marginTop: '0.6rem',
                 gap: '0.3rem',
             }}
         >

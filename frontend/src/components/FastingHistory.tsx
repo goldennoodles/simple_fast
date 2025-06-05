@@ -44,7 +44,7 @@ const FastingHistory: React.FC<FastingHistoryProps> = ({ sessions, onDeleteSessi
                 backgroundColor: '#fff',
                 borderRadius: '12px',
                 boxShadow: '0 2px 12px rgba(0,0,0,0.1)',
-                marginTop: '2rem',
+                marginTop: '1rem',
             }}
         >
             <h2
