@@ -38,6 +38,8 @@ const FastingTimer: React.FC<FastingTimerProps> = ({
 
     async function scheduleNotification(startTime: Date, durationSeconds: number) {
         const notifyTime = new Date(startTime.getTime() + durationSeconds * 1000);
+
+        console.log("Notify Time Set To:" + notifyTime)
         await LocalNotifications.schedule({
             notifications: [
                 {
@@ -56,6 +58,7 @@ const FastingTimer: React.FC<FastingTimerProps> = ({
     }
 
     async function cancelNotification() {
+        console.log("Cancelling Notificaiton")
         await LocalNotifications.cancel({ notifications: [{ id: notificationId }] });
     }
 

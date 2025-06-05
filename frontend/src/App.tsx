@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { Preferences } from '@capacitor/preferences';
-import { LocalNotifications } from '@capacitor/local-notifications';
 import MoodTracker from './components/MoodTracker';
 import FastingTimer from './components/FastingTimer/FastingTimer';
 import FastingHistory from './components/FastingHistory';
