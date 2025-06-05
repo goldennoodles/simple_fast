@@ -73,6 +73,16 @@ const FastingHistory: React.FC<FastingHistoryProps> = ({ sessions, onDeleteSessi
                             )
                             : null;
 
+                        const isBelowGoal = durationSeconds !== null && session.goalDurationSeconds !== undefined && durationSeconds < session.goalDurationSeconds;
+                        const isAboveOrEqualGoal = durationSeconds !== null && session.goalDurationSeconds !== undefined && durationSeconds >= session.goalDurationSeconds;
+
+                        let durationColor = undefined;
+                        if (isBelowGoal) {
+                            durationColor = '#e74c3c'; // red
+                        } else if (isAboveOrEqualGoal) {
+                            durationColor = '#2980f3'; // blue
+                        }
+
                         return (
                             <li
                                 key={session.id}
@@ -122,7 +132,7 @@ const FastingHistory: React.FC<FastingHistoryProps> = ({ sessions, onDeleteSessi
                                         justifyContent: 'space-between',
                                         marginBottom: '0.5rem',
                                         fontWeight: '600',
-                                        color: '#34495e',
+                                        color: durationColor || '#34495e',
                                     }}
                                 >
                                     <span>Duration:</span>
