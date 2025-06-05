@@ -43,6 +43,10 @@ const App: React.FC = () => {
     setSelectedMood(mood);
   };
 
+  const handleDeleteSession = (id: number) => {
+    setSessions((prevSessions) => prevSessions.filter((session) => session.id !== id));
+  };
+
   return (
     <div style={{
       width: '100vw',
@@ -108,7 +112,7 @@ const App: React.FC = () => {
           className={`history-animate ${isFasting ? 'history-down' : 'history-up'}`}
           style={{ transition: 'margin-top 0.5s cubic-bezier(0.4,0,0.2,1)', marginTop: isFasting ? '10px' : '0' }}
         >
-          <FastingHistory sessions={sessions} />
+          <FastingHistory sessions={sessions} onDeleteSession={handleDeleteSession} />
         </div>
       </div>
     </div>

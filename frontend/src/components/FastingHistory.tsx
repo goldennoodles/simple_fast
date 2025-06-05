@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 
 interface FastingSession {
     id: number;
@@ -9,9 +9,27 @@ interface FastingSession {
 
 interface FastingHistoryProps {
     sessions: FastingSession[];
+    onDeleteSession: (id: number) => void;
 }
 
-const FastingHistory: React.FC<FastingHistoryProps> = ({ sessions }) => {
+const FastingHistory: React.FC<FastingHistoryProps> = ({ sessions, onDeleteSession }) => {
+    const [confirmDeleteId, setConfirmDeleteId] = useState<number | null>(null);
+
+    const openConfirmDialog = (id: number) => {
+        setConfirmDeleteId(id);
+    };
+
+    const closeConfirmDialog = () => {
+        setConfirmDeleteId(null);
+    };
+
+    const confirmDelete = () => {
+        if (confirmDeleteId !== null) {
+            onDeleteSession(confirmDeleteId);
+            closeConfirmDialog();
+        }
+    };
+
     return (
         <div
             style={{
@@ -57,13 +75,16 @@ const FastingHistory: React.FC<FastingHistoryProps> = ({ sessions }) => {
                         return (
                             <li
                                 key={session.id}
+                                onClick={() => openConfirmDialog(session.id)}
                                 style={{
+                                    cursor: 'pointer',
                                     border: '1px solid #ddd',
                                     borderRadius: '12px',
                                     padding: '1rem',
                                     marginBottom: '1rem',
                                     backgroundColor: '#f0f4f8',
                                     boxShadow: 'inset 0 0 5px rgba(0,0,0,0.05)',
+                                    position: 'relative',
                                 }}
                             >
                                 <div
@@ -125,6 +146,70 @@ const FastingHistory: React.FC<FastingHistoryProps> = ({ sessions }) => {
                         );
                     })}
                 </ul>
+            )}
+
+            {confirmDeleteId !== null && (
+                <div
+                    role="dialog"
+                    aria-modal="true"
+                    style={{
+                        position: 'fixed',
+                        top: 0,
+                        left: 0,
+                        width: '100vw',
+                        height: '100vh',
+                        backgroundColor: 'rgba(0, 0, 0, 0.5)',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        zIndex: 1000,
+                    }}
+                >
+                    <div
+                        style={{
+                            backgroundColor: '#fff',
+                            padding: '1.5rem',
+                            borderRadius: '8px',
+                            boxShadow: '0 2px 10px rgba(0,0,0,0.2)',
+                            maxWidth: '400px',
+                            width: '90%',
+                            textAlign: 'center',
+                        }}
+                    >
+                        <p style={{ marginBottom: '1rem', fontWeight: '600', fontSize: '1.1rem' }}>
+                            Are you sure you want to delete this fasting session?
+                        </p>
+                        <button
+                            onClick={confirmDelete}
+                            style={{
+                                marginRight: '1rem',
+                                padding: '0.5rem 1rem',
+                                backgroundColor: '#e74c3c',
+                                color: '#fff',
+                                border: 'none',
+                                borderRadius: '4px',
+                                cursor: 'pointer',
+                                fontWeight: '600',
+                            }}
+                        >
+                            Delete
+                        </button>
+                        <button
+                            onClick={closeConfirmDialog}
+                            style={{
+                                padding: '0.5rem 1rem',
+                                backgroundColor: '#bdc3c7',
+                                color: '#2c3e50',
+                                border: 'none',
+                                borderRadius: '4px',
+                                cursor: 'pointer',
+                                fontWeight: '600',
+                            }}
+                        >
+                            Cancel
+                        </button>
+                    </div>
+                </div>
             )}
         </div>
     );
