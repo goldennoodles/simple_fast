@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { Preferences } from '@capacitor/preferences';
-import MoodTracker from './components/MoodTracker';
+import MoodTracker from './components/Mood/MoodTracker';
 import FastingTimer from './components/FastingTimer/FastingTimer';
-import FastingHistory from './components/FastingHistory';
+import FastingHistory from './components/FastingHistory/FastingHistory';
 
 interface FastingSession {
   id: number;
@@ -116,6 +116,14 @@ const App: React.FC = () => {
     setSessions((prevSessions) => prevSessions.filter((session) => session.id !== id));
   };
 
+  const handleEditSession = (updatedSession: FastingSession) => {
+    setSessions((prevSessions) =>
+      prevSessions.map((session) =>
+        session.id === updatedSession.id ? updatedSession : session
+      )
+    );
+  };
+
   return (
     <div
       style={{
@@ -188,7 +196,7 @@ const App: React.FC = () => {
           className={`history-animate ${isFasting ? 'history-down' : 'history-up'}`}
           style={{ transition: 'margin-top 0.5s cubic-bezier(0.4,0,0.2,1)', marginTop: isFasting ? '10px' : '0' }}
         >
-          <FastingHistory sessions={sessions} onDeleteSession={handleDeleteSession} />
+          <FastingHistory sessions={sessions} onDeleteSession={handleDeleteSession} onEditSession={handleEditSession} />
         </div>
       </div>
     </div>

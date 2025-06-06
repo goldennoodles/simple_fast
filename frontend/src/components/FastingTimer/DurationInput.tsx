@@ -65,7 +65,7 @@ const DurationInput: React.FC<DurationInputProps> = ({ inputDuration, onDuration
     return (
         <div style={{ marginBottom: '1rem', display: 'flex', alignItems: 'center' }}>
             <label htmlFor="fast-hours" style={{ marginRight: '0.5rem' }}>
-                Fast Duration (HH:mm):
+                Fast Duration (Hour : Minute):
             </label>
             <input
                 id="fast-hours"
