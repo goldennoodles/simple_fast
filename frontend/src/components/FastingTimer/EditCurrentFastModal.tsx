@@ -21,12 +21,14 @@ const EditCurrentFastModal: React.FC<EditCurrentFastModalProps> = ({
 
     useEffect(() => {
         if (!open) return;
+        // Only set editedTime when modal opens, not on every prop change
         if (editField === "start") {
             setEditedTime(startTime.toISOString().slice(0, 16));
         } else {
             setEditedTime(endTime.toISOString().slice(0, 16));
         }
-    }, [open, editField, startTime, endTime]);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [open]);
 
     if (!open) {
         return null;
