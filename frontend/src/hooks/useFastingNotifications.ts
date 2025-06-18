@@ -150,6 +150,7 @@ export function useFastingNotifications({
                 return;
             }
 
+
             const granted = await requestNotificationPermission();
             if (!granted) {
                 console.log('Notification permission not granted, skipping scheduling.');
