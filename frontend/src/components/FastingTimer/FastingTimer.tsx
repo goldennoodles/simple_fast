@@ -51,6 +51,12 @@ const FastingTimer: React.FC<FastingTimerProps & { onEditTime: (field: "start" |
     async function scheduleNotification(startTime: Date, durationSeconds: number) {
         const notifyTime = new Date(startTime.getTime() + durationSeconds * 1000);
 
+        const now = new Date();
+        if (notifyTime <= now) {
+            console.log("Notification time is in the past. Not scheduling notification.");
+            return;
+        }
+
         console.log("Notify Time Set To:" + notifyTime)
         await LocalNotifications.schedule({
             notifications: [
