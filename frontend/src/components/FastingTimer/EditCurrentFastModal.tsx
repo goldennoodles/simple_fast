@@ -40,6 +40,11 @@ const EditCurrentFastModal: React.FC<EditCurrentFastModalProps> = ({
             alert("Invalid date/time");
             return;
         }
+        // Validate end time is not before start time
+        if (editField === "end" && newDate < startTime) {
+            alert("End time cannot be before start time.");
+            return;
+        }
         onSave(newDate);
     };
 

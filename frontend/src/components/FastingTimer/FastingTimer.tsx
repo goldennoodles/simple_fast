@@ -88,6 +88,9 @@ const FastingTimer: React.FC<FastingTimerProps & { onEditTime: (field: "start" |
                 setElapsedSeconds(diff);
             };
             updateElapsed();
+            if (intervalRef.current !== null) {
+                clearInterval(intervalRef.current);
+            }
             intervalRef.current = window.setInterval(updateElapsed, 1000);
         } else {
             setElapsedSeconds(0);
