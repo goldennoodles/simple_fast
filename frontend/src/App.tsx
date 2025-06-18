@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { Preferences } from '@capacitor/preferences';
+import { v4 as uuidv4 } from 'uuid';
 import MoodTracker from './components/Mood/MoodTracker';
 import FastingTimer from './components/FastingTimer/FastingTimer';
 import FastingHistory from './components/FastingHistory/FastingHistory';
 
 interface FastingSession {
-  id: number;
+  id: string;
   startTime: Date;
   endTime: Date | null;
   mood: string | null;
@@ -19,7 +20,7 @@ interface AppState {
   startTime: string | null; // ISO string
   selectedMood: string | null;
   sessions: Array<{
-    id: number;
+    id: string;
     startTime: string;
     endTime: string | null;
     mood: string | null;
@@ -37,6 +38,11 @@ const App: React.FC = () => {
 
   // Load state from storage on mount
   useEffect(() => {
+    const isValidUUID = (id: string): boolean => {
+      const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+      return uuidRegex.test(id);
+    };
+
     const loadState = async () => {
       try {
         const result = await Preferences.get({ key: STORAGE_KEY });
@@ -45,14 +51,42 @@ const App: React.FC = () => {
           setIsFasting(savedState.isFasting);
           setStartTime(savedState.startTime ? new Date(savedState.startTime) : null);
           setSelectedMood(savedState.selectedMood);
-          setSessions(
-            savedState.sessions.map((session) => ({
+
+          let sessionsUpdated = false;
+          const updatedSessions = savedState.sessions.map((session) => {
+            let newId = session.id;
+            if (!isValidUUID(session.id)) {
+              newId = uuidv4();
+              sessionsUpdated = true;
+            }
+            return {
               ...session,
+              id: newId,
               startTime: new Date(session.startTime),
               endTime: session.endTime ? new Date(session.endTime) : null,
-            }))
-          );
+            };
+          });
+
+          setSessions(updatedSessions);
           setCurrentFastingDurationSeconds(savedState.currentFastingDurationSeconds);
+
+          if (sessionsUpdated) {
+            // Save updated sessions back to storage to prevent repeated migrations
+            const stateToSave: AppState = {
+              isFasting: savedState.isFasting,
+              startTime: savedState.startTime,
+              selectedMood: savedState.selectedMood,
+              sessions: updatedSessions.map((session) => ({
+                id: session.id,
+                startTime: session.startTime.toISOString(),
+                endTime: session.endTime ? session.endTime.toISOString() : null,
+                mood: session.mood,
+                goalDurationSeconds: session.goalDurationSeconds,
+              })),
+              currentFastingDurationSeconds: savedState.currentFastingDurationSeconds,
+            };
+            await Preferences.set({ key: STORAGE_KEY, value: JSON.stringify(stateToSave) });
+          }
         }
       } catch (error) {
         console.error('Failed to load app state:', error);
@@ -96,7 +130,7 @@ const App: React.FC = () => {
   const handleEnd = async (time: Date) => {
     setIsFasting(false);
     const newSession: FastingSession = {
-      id: sessions.length + 1,
+      id: uuidv4(),
       startTime: startTime || time,
       endTime: time,
       mood: selectedMood,
@@ -144,7 +178,7 @@ const App: React.FC = () => {
     setSelectedMood(mood);
   };
 
-  const handleDeleteSession = (id: number) => {
+  const handleDeleteSession = (id: string) => {
     setSessions((prevSessions) => prevSessions.filter((session) => session.id !== id));
   };
 

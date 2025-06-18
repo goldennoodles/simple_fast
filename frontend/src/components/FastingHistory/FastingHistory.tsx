@@ -5,7 +5,7 @@ import StreakCounter from "./StreakCounter";
 
 interface FastingHistoryProps {
     sessions: FastingSession[];
-    onDeleteSession: (id: number) => void;
+    onDeleteSession: (id: string) => void;
     onEditSession: (updatedSession: FastingSession) => void;
 }
 
@@ -24,7 +24,8 @@ const FastingHistory: React.FC<FastingHistoryProps> = ({
         setEditSession(null);
     };
 
-    const handleDelete = (id: number) => {
+    const handleDelete = (id: string) => {
+        console.log("Deleting session with id:", id);
         onDeleteSession(id);
         closeEditDialog();
     };

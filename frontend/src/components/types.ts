@@ -1,5 +1,5 @@
 export interface FastingSession {
-    id: number;
+    id: string;
     startTime: Date;
     endTime: Date | null;
     mood: string | null;

@@ -6,7 +6,7 @@ import type { FastingSession } from "../types";
 interface EditFastingSessionModalProps {
   session: FastingSession | null;
   onSave: (updatedSession: FastingSession) => void;
-  onDelete: (id: number) => void;
+  onDelete: (id: string) => void;
   onCancel: () => void;
 }
 
