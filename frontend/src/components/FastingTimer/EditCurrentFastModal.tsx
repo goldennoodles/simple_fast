@@ -9,6 +9,26 @@ interface EditCurrentFastModalProps {
     editField: "start" | "end";
 }
 
+// Helper to convert Date to local datetime string "yyyy-MM-ddTHH:mm"
+function toLocalDateTimeString(date: Date): string {
+    const pad = (n: number) => n.toString().padStart(2, "0");
+    const year = date.getFullYear();
+    const month = pad(date.getMonth() + 1);
+    const day = pad(date.getDate());
+    const hours = pad(date.getHours());
+    const minutes = pad(date.getMinutes());
+    return `${year}-${month}-${day}T${hours}:${minutes}`;
+}
+
+// Helper to parse local datetime string "yyyy-MM-ddTHH:mm" to Date
+function parseLocalDateTimeString(dateTimeStr: string): Date {
+    // dateTimeStr is in local time, so create Date with components
+    const [datePart, timePart] = dateTimeStr.split("T");
+    const [year, month, day] = datePart.split("-").map(Number);
+    const [hours, minutes] = timePart.split(":").map(Number);
+    return new Date(year, month - 1, day, hours, minutes);
+}
+
 const EditCurrentFastModal: React.FC<EditCurrentFastModalProps> = ({
     open,
     onClose,
@@ -23,9 +43,9 @@ const EditCurrentFastModal: React.FC<EditCurrentFastModalProps> = ({
         if (!open) return;
         // Only set editedTime when modal opens, not on every prop change
         if (editField === "start") {
-            setEditedTime(startTime.toISOString().slice(0, 16));
+            setEditedTime(toLocalDateTimeString(startTime));
         } else {
-            setEditedTime(endTime.toISOString().slice(0, 16));
+            setEditedTime(toLocalDateTimeString(endTime));
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [open]);
@@ -35,7 +55,7 @@ const EditCurrentFastModal: React.FC<EditCurrentFastModalProps> = ({
     }
 
     const handleSave = () => {
-        const newDate = new Date(editedTime);
+        const newDate = parseLocalDateTimeString(editedTime);
         if (isNaN(newDate.getTime())) {
             alert("Invalid date/time");
             return;
