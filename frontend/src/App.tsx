@@ -117,8 +117,18 @@ const App: React.FC = () => {
       setStartTime(newTime);
       // No change to fastingDurationSeconds, so end time changes accordingly
     } else if (field === "end") {
-      // Update fastingDurationSeconds based on new end time and current startTime
-      const newDurationSeconds = Math.max(0, Math.floor((newTime.getTime() - startTime.getTime()) / 1000));
+      // Zero out seconds and milliseconds in startTime for accurate duration calculation
+      const startTimeZeroed = new Date(
+        startTime.getFullYear(),
+        startTime.getMonth(),
+        startTime.getDate(),
+        startTime.getHours(),
+        startTime.getMinutes(),
+        0,
+        0
+      );
+      // Update fastingDurationSeconds based on new end time and zeroed startTime
+      const newDurationSeconds = Math.max(0, Math.round((newTime.getTime() - startTimeZeroed.getTime()) / 1000));
       setCurrentFastingDurationSeconds(newDurationSeconds);
     }
   };

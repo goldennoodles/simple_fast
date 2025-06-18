@@ -12,11 +12,13 @@ interface EditCurrentFastModalProps {
 // Helper to convert Date to local datetime string "yyyy-MM-ddTHH:mm"
 function toLocalDateTimeString(date: Date): string {
     const pad = (n: number) => n.toString().padStart(2, "0");
-    const year = date.getFullYear();
-    const month = pad(date.getMonth() + 1);
-    const day = pad(date.getDate());
-    const hours = pad(date.getHours());
-    const minutes = pad(date.getMinutes());
+    // Create a new date with seconds and milliseconds zeroed
+    const d = new Date(date.getFullYear(), date.getMonth(), date.getDate(), date.getHours(), date.getMinutes(), 0, 0);
+    const year = d.getFullYear();
+    const month = pad(d.getMonth() + 1);
+    const day = pad(d.getDate());
+    const hours = pad(d.getHours());
+    const minutes = pad(d.getMinutes() + 1);
     return `${year}-${month}-${day}T${hours}:${minutes}`;
 }
 
@@ -38,6 +40,7 @@ const EditCurrentFastModal: React.FC<EditCurrentFastModalProps> = ({
     editField,
 }) => {
     const [editedTime, setEditedTime] = useState<string>("");
+    const [warning, setWarning] = useState<string>("");
 
     useEffect(() => {
         if (!open) return;
@@ -47,6 +50,7 @@ const EditCurrentFastModal: React.FC<EditCurrentFastModalProps> = ({
         } else {
             setEditedTime(toLocalDateTimeString(endTime));
         }
+        setWarning("");
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [open]);
 
@@ -54,18 +58,35 @@ const EditCurrentFastModal: React.FC<EditCurrentFastModalProps> = ({
         return null;
     }
 
-    const handleSave = () => {
-        const newDate = parseLocalDateTimeString(editedTime);
+    const validateTime = (timeStr: string): boolean => {
+        const newDate = parseLocalDateTimeString(timeStr);
         if (isNaN(newDate.getTime())) {
-            alert("Invalid date/time");
-            return;
+            setWarning("Invalid date/time");
+            return false;
         }
-        // Validate end time is not before start time
         if (editField === "end" && newDate < startTime) {
-            alert("End time cannot be before start time.");
+            setWarning("End time cannot be before start time.");
+            return false;
+        }
+        if (editField === "start" && newDate > endTime) {
+            setWarning("Start time cannot be after end time.");
+            return false;
+        }
+        setWarning("");
+        return true;
+    };
+
+    const handleSave = () => {
+        if (!validateTime(editedTime)) {
             return;
         }
+        const newDate = parseLocalDateTimeString(editedTime);
         onSave(newDate);
+    };
+
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setEditedTime(e.target.value);
+        validateTime(e.target.value);
     };
 
     return (
@@ -109,16 +130,28 @@ const EditCurrentFastModal: React.FC<EditCurrentFastModalProps> = ({
                 <input
                     type="datetime-local"
                     value={editedTime}
-                    onChange={(e) => setEditedTime(e.target.value)}
+                    onChange={handleChange}
                     style={{
                         width: "97%",
-                        marginBottom: "1rem",
+                        marginBottom: "0.25rem",
                         padding: "0.5rem",
                         fontSize: "1rem",
                         borderRadius: "6px",
-                        border: "1px solid #ccc",
+                        border: warning ? "1px solid red" : "1px solid #ccc",
                     }}
                 />
+                {warning && (
+                    <div
+                        style={{
+                            color: "red",
+                            fontSize: "0.85rem",
+                            marginBottom: "1rem",
+                            textAlign: "left",
+                        }}
+                    >
+                        {warning}
+                    </div>
+                )}
                 <div
                     style={{
                         display: "flex",
@@ -142,13 +175,14 @@ const EditCurrentFastModal: React.FC<EditCurrentFastModalProps> = ({
                     </button>
                     <button
                         onClick={handleSave}
+                        disabled={!!warning}
                         style={{
                             padding: "0.5rem 1rem",
-                            backgroundColor: "#2980f3",
+                            backgroundColor: warning ? "#95a5a6" : "#2980f3",
                             color: "#fff",
                             border: "none",
                             borderRadius: "4px",
-                            cursor: "pointer",
+                            cursor: warning ? "not-allowed" : "pointer",
                             fontWeight: "600",
                         }}
                     >
