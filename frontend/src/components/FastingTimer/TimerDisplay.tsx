@@ -12,8 +12,8 @@ const TimerDisplay: React.FC<TimerDisplayProps> = ({ elapsedSeconds, progressPer
 
     return (
         <svg
-            width="150"
-            height="150"
+            width="200"
+            height="200"
             viewBox="0 0 100 100"
             style={{ marginBottom: '1rem' }}
         >
@@ -42,7 +42,7 @@ const TimerDisplay: React.FC<TimerDisplayProps> = ({ elapsedSeconds, progressPer
                 x="50"
                 y="55"
                 textAnchor="middle"
-                fontSize="12"
+                fontSize="14"
                 fill="#333"
             >
                 {formatTime(elapsedSeconds)}

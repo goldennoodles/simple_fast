@@ -26,6 +26,14 @@ const FastingTimer: React.FC<FastingTimerProps> = ({
     const intervalRef = useRef<number | null>(null);
     const notificationId = 1;
 
+    function formatDateTime(date: Date) {
+        const day = String(date.getDate()).padStart(2, '0');
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const hours = String(date.getHours()).padStart(2, '0');
+        const minutes = String(date.getMinutes()).padStart(2, '0');
+        return `${day}-${month} ${hours}:${minutes}`;
+    }
+
     async function requestNotificationPermission() {
         const permission = await LocalNotifications.requestPermissions();
         if (permission.display === 'granted') {
@@ -135,10 +143,17 @@ const FastingTimer: React.FC<FastingTimerProps> = ({
                     <DurationInput inputDuration={inputDuration} onDurationChange={handleDurationChange} />
                 </>
             )}
+
             {isFasting && (
-                <div style={{ fontSize: '0.85rem', color: '#888', marginBottom: '0.25rem' }}>
-                    Goal: {formatGoalDuration(fastingDurationSeconds)}
-                </div>
+                <>
+                    <div style={{ fontSize: '0.85rem', color: '#888', marginBottom: '0.25rem' }}>
+                        Goal: {formatGoalDuration(fastingDurationSeconds)}
+                    </div>
+                    <div style={{ fontSize: '0.85rem', color: '#555', marginBottom: '0.5rem' }}>
+                        Start: {startTime ? formatDateTime(startTime) : '--:--'}<br />
+                        End: {startTime ? formatDateTime(new Date(startTime.getTime() + fastingDurationSeconds * 1000)) : '--:--'}
+                    </div>
+                </>
             )}
             <ActionButton isFasting={isFasting} onStartClick={handleStartClick} onEndClick={handleEndClick} isOverGoal={isOverGoal} />
             {!isFasting && (

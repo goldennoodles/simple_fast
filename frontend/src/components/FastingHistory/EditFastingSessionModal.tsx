@@ -115,7 +115,7 @@ const EditFastingSessionModal: React.FC<EditFastingSessionModalProps> = ({
           value={editedStartTime}
           onChange={(e) => setEditedStartTime(e.target.value)}
           style={{
-            width: "100%",
+            width: "97%",
             marginBottom: "1rem",
             padding: "0.5rem",
             fontSize: "1rem",
@@ -138,7 +138,7 @@ const EditFastingSessionModal: React.FC<EditFastingSessionModalProps> = ({
           value={editedEndTime}
           onChange={(e) => setEditedEndTime(e.target.value)}
           style={{
-            width: "100%",
+            width: "97%",
             marginBottom: "1rem",
             padding: "0.5rem",
             fontSize: "1rem",
