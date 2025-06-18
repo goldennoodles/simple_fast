@@ -70,6 +70,7 @@ export function useFastingNotifications({
                 continue;
             }
 
+
             if (elapsed >= milestoneElapsedSeconds) {
                 // Milestone passed, send immediate notification if not sent
                 // But only send one notification if elapsed > total (100%)
@@ -77,7 +78,6 @@ export function useFastingNotifications({
                     console.log(`Elapsed time exceeded total fasting duration, skipping milestone ${milestone.percent}% notification to avoid spam.`);
                     continue;
                 }
-                console.log(`Milestone ${milestone.percent}% passed, sending immediate notification.`);
                 try {
                     await sendNotification(`Fasting Progress: ${milestone.percent}%`, milestone.message);
                     sentMilestonesRef.current.add(milestone.percent);
@@ -136,7 +136,7 @@ export function useFastingNotifications({
 
     useEffect(() => {
         async function manageNotifications() {
-            console.log(`useFastingNotifications useEffect triggered with isFasting: ${isFasting}, startTime: ${startTime}, fastingDurationSeconds: ${fastingDurationSeconds}, elapsedSeconds: ${elapsedSeconds}`);
+            console.log(`useFastingNotifications useEffect triggered with isFasting: ${isFasting}, startTime: ${startTime}, fastingDurationSeconds: ${fastingDurationSeconds}`);
 
             if (!isFasting) {
                 console.log('Fasting stopped or not started, cancelling notifications and clearing sent milestones.');
@@ -156,7 +156,7 @@ export function useFastingNotifications({
                 return;
             }
 
-            // Only clear sent milestones and cancel notifications if startTime changed (new fast)
+            // Only clear sent milestones and cancel notifications if startTime or fastingDurationSeconds changed (new or edited fast)
             if (startTime !== prevStartTimeRef.current) {
                 await cancelAllNotifications();
                 sentMilestonesRef.current.clear();
@@ -178,5 +178,5 @@ export function useFastingNotifications({
             console.log('Cleaning up notifications on fasting end or unmount');
             cancelAllNotifications();
         };
-    }, [isFasting, startTime, fastingDurationSeconds, elapsedSeconds]);
+    }, [isFasting, startTime, fastingDurationSeconds]);
 }
