@@ -260,7 +260,12 @@ const App: React.FC = () => {
               width: '100%',
             }}
           >
-            {`How are you feeling?${selectedMood ? ' ' + selectedMood : ''}`}
+            How are you feeling?
+            {selectedMood && (
+              <span style={{ color: 'green', fontWeight: 'bold', marginLeft: '0.25rem' }}>
+                {selectedMood}
+              </span>
+            )}
           </h3>
           <MoodTracker selectedMood={selectedMood} onMoodSelect={handleMoodSelect} />
         </div>
