@@ -43,15 +43,14 @@ const FastingHistory: React.FC<FastingHistoryProps> = ({
 
     // Helper function to calculate the current streak
     const calculateStreak = (sessions: FastingSession[]): number => {
-        // Sort sessions by endTime descending (most recent first)
-        const sortedSessions = [...sessions].sort((a, b) => {
-            if (a.endTime === null) return 1; // ongoing sessions last
-            if (b.endTime === null) return -1;
-            return new Date(b.endTime).getTime() - new Date(a.endTime).getTime();
-        });
+        // Use sessions array as-is, assuming it reflects entry order (most recent first)
+        if (sessions.length === 0) {
+            return 0;
+        }
 
+        // Count consecutive sessions from the start that meet their goal
         let streak = 0;
-        for (const session of sortedSessions) {
+        for (const session of sessions) {
             if (session.endTime === null) {
                 // Ongoing fast, skip
                 continue;
@@ -63,12 +62,11 @@ const FastingHistory: React.FC<FastingHistoryProps> = ({
             const durationSeconds = Math.floor(
                 (new Date(session.endTime).getTime() - new Date(session.startTime).getTime()) / 1000
             );
-            if (durationSeconds >= session.goalDurationSeconds) {
-                streak++;
-            } else {
-                // Streak breaks if goal not met
+            if (durationSeconds < session.goalDurationSeconds) {
+                // streak breaks at first failure
                 break;
             }
+            streak++;
         }
         return streak;
     };

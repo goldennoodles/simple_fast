@@ -136,7 +136,11 @@ const App: React.FC = () => {
       mood: selectedMood,
       goalDurationSeconds: currentFastingDurationSeconds ?? undefined,
     };
-    setSessions([newSession, ...sessions]);
+    setSessions((prevSessions) => {
+      const updatedSessions = [newSession, ...prevSessions];
+      // No sorting, preserve insertion order
+      return updatedSessions;
+    });
     setStartTime(null);
     setSelectedMood(null);
     setCurrentFastingDurationSeconds(null);
@@ -183,11 +187,13 @@ const App: React.FC = () => {
   };
 
   const handleEditSession = (updatedSession: FastingSession) => {
-    setSessions((prevSessions) =>
-      prevSessions.map((session) =>
+    setSessions((prevSessions) => {
+      const updatedSessions = prevSessions.map((session) =>
         session.id === updatedSession.id ? updatedSession : session
-      )
-    );
+      );
+      // No sorting, preserve insertion order (user entry order)
+      return updatedSessions;
+    });
   };
 
   return (

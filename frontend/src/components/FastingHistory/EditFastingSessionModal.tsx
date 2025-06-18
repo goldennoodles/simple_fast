@@ -21,10 +21,26 @@ const EditFastingSessionModal: React.FC<EditFastingSessionModalProps> = ({
   const [editedMood, setEditedMood] = useState<string>("");
   const [editedGoalDuration, setEditedGoalDuration] = useState<string>("00:00");
 
+  // Helper function to convert Date to local datetime-local string "YYYY-MM-DDTHH:mm"
+  const toLocalDateTimeString = (date: Date): string => {
+    const pad = (num: number) => num.toString().padStart(2, "0");
+    return (
+      date.getFullYear() +
+      "-" +
+      pad(date.getMonth() + 1) +
+      "-" +
+      pad(date.getDate()) +
+      "T" +
+      pad(date.getHours()) +
+      ":" +
+      pad(date.getMinutes())
+    );
+  };
+
   useEffect(() => {
     if (session) {
-      setEditedStartTime(session.startTime.toISOString().slice(0, 16));
-      setEditedEndTime(session.endTime ? session.endTime.toISOString().slice(0, 16) : "");
+      setEditedStartTime(toLocalDateTimeString(session.startTime));
+      setEditedEndTime(session.endTime ? toLocalDateTimeString(session.endTime) : "");
       setEditedMood(session.mood || "");
       if (session.goalDurationSeconds !== undefined) {
         const hours = Math.floor(session.goalDurationSeconds / 3600);
@@ -47,10 +63,18 @@ const EditFastingSessionModal: React.FC<EditFastingSessionModalProps> = ({
     const [hoursStr, minutesStr] = editedGoalDuration.split(":");
     const goalDurationSeconds = parseInt(hoursStr) * 3600 + parseInt(minutesStr) * 60;
 
+    // Parse local datetime-local string to Date object
+    const parseLocalDateTimeString = (dateTimeStr: string): Date => {
+      const [datePart, timePart] = dateTimeStr.split("T");
+      const [year, month, day] = datePart.split("-").map(Number);
+      const [hour, minute] = timePart.split(":").map(Number);
+      return new Date(year, month - 1, day, hour, minute);
+    };
+
     const updatedSession: FastingSession = {
       ...session,
-      startTime: new Date(editedStartTime),
-      endTime: editedEndTime ? new Date(editedEndTime) : null,
+      startTime: parseLocalDateTimeString(editedStartTime),
+      endTime: editedEndTime ? parseLocalDateTimeString(editedEndTime) : null,
       mood: editedMood,
       goalDurationSeconds: goalDurationSeconds > 0 ? goalDurationSeconds : undefined,
     };
