@@ -40,7 +40,7 @@ const StreakCounter: React.FC<StreakCounterProps> = ({ streak }) => {
                     top: "50%",
                     left: "50%",
                     transform: "translate(-50%, -50%)",
-                    fontSize: "2.5rem",
+                    fontSize: "1.5rem",
                     opacity: 0.1,
                     pointerEvents: "none",
                     userSelect: "none",
