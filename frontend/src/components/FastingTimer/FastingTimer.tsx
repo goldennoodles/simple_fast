@@ -3,6 +3,7 @@ import TimerDisplay from './TimerDisplay';
 import OverDurationDisplay from './OverDurationDisplay';
 import DurationInput from './DurationInput';
 import ActionButton from './ActionButton';
+import EditCurrentFastModal from './EditCurrentFastModal';
 import { parseDuration } from '../../utils/time';
 import { LocalNotifications } from '@capacitor/local-notifications';
 
@@ -14,15 +15,18 @@ interface FastingTimerProps {
     fastingDurationSeconds: number;
 }
 
-const FastingTimer: React.FC<FastingTimerProps> = ({
+const FastingTimer: React.FC<FastingTimerProps & { onEditTime: (field: "start" | "end", newTime: Date) => void }> = ({
     onStart,
     onEnd,
     isFasting,
     startTime,
     fastingDurationSeconds,
+    onEditTime,
 }) => {
     const [elapsedSeconds, setElapsedSeconds] = useState(0);
     const [inputDuration, setInputDuration] = useState('48:00'); // default 8 hours in HH:mm format
+    const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+    const [editField, setEditField] = useState<"start" | "end">("start");
     const intervalRef = useRef<number | null>(null);
     const notificationId = 1;
 
@@ -132,6 +136,20 @@ const FastingTimer: React.FC<FastingTimerProps> = ({
 
     const isOverGoal = isFasting && elapsedSeconds > fastingDurationSeconds;
 
+    const handleEditClick = (field: "start" | "end") => {
+        setEditField(field);
+        setIsEditModalOpen(true);
+    };
+
+    const handleModalClose = () => {
+        setIsEditModalOpen(false);
+    };
+
+    const handleModalSave = (newTime: Date) => {
+        onEditTime(editField, newTime);
+        setIsEditModalOpen(false);
+    };
+
     return (
         <div style={{ textAlign: 'center', padding: '1rem', position: 'relative', marginTop: '1rem' }}>
             <TimerDisplay elapsedSeconds={elapsedSeconds} progressPercent={progressPercent} isOverGoal={isOverGoal} />
@@ -150,8 +168,41 @@ const FastingTimer: React.FC<FastingTimerProps> = ({
                         Goal: {formatGoalDuration(fastingDurationSeconds)}
                     </div>
                     <div style={{ fontSize: '0.85rem', color: '#555', marginBottom: '0.5rem' }}>
-                        Start: {startTime ? formatDateTime(startTime) : '--:--'}<br />
-                        End: {startTime ? formatDateTime(new Date(startTime.getTime() + fastingDurationSeconds * 1000)) : '--:--'}
+                        Start: {startTime ? formatDateTime(startTime) : '--:--'}{' '}
+                        <button
+                            type="button"
+                            onClick={() => handleEditClick("start")}
+                            style={{
+                                marginLeft: '0.5rem',
+                                fontSize: '0.75rem',
+                                padding: '0.15rem 0.4rem',
+                                cursor: 'pointer',
+                                borderRadius: '4px',
+                                border: '1px solid #2980f3',
+                                backgroundColor: 'white',
+                                color: '#2980f3',
+                            }}
+                        >
+                            Edit
+                        </button>
+                        <br />
+                        End: {startTime ? formatDateTime(new Date(startTime.getTime() + fastingDurationSeconds * 1000)) : '--:--'}{' '}
+                        <button
+                            type="button"
+                            onClick={() => handleEditClick("end")}
+                            style={{
+                                marginLeft: '0.5rem',
+                                fontSize: '0.75rem',
+                                padding: '0.15rem 0.4rem',
+                                cursor: 'pointer',
+                                borderRadius: '4px',
+                                border: '1px solid #2980f3',
+                                backgroundColor: 'white',
+                                color: '#2980f3',
+                            }}
+                        >
+                            Edit
+                        </button>
                     </div>
                 </>
             )}
@@ -188,6 +239,14 @@ const FastingTimer: React.FC<FastingTimerProps> = ({
                     </button>
                 </div>
             )}
+            <EditCurrentFastModal
+                open={isEditModalOpen}
+                onClose={handleModalClose}
+                onSave={handleModalSave}
+                startTime={startTime ?? new Date()}
+                endTime={startTime ? new Date(startTime.getTime() + fastingDurationSeconds * 1000) : new Date()}
+                editField={editField}
+            />
         </div>
     );
 };

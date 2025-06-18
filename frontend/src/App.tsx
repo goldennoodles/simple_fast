@@ -108,6 +108,28 @@ const App: React.FC = () => {
     setCurrentFastingDurationSeconds(null);
   };
 
+  const handleEditTime = (field: "start" | "end", newTime: Date) => {
+    if (!startTime) return;
+
+    if (field === "start") {
+      // Update startTime and keep fasting duration the same
+      const duration = currentFastingDurationSeconds ?? 0;
+      setStartTime(newTime);
+      // No change to fastingDurationSeconds, so end time changes accordingly
+    } else if (field === "end") {
+      // Update fastingDurationSeconds based on new end time and current startTime
+      const newDurationSeconds = Math.max(0, Math.floor((newTime.getTime() - startTime.getTime()) / 1000));
+      setCurrentFastingDurationSeconds(newDurationSeconds);
+    }
+  };
+
+  // Pass handleEditTime to FastingTimer
+  // In the return JSX:
+  // <FastingTimer
+  //   ...
+  //   onEditTime={handleEditTime}
+  // />
+
   const handleMoodSelect = (mood: string) => {
     setSelectedMood(mood);
   };
@@ -162,6 +184,7 @@ const App: React.FC = () => {
         fastingDurationSeconds={isFasting ? currentFastingDurationSeconds ?? 0 : 0}
         onStart={handleStart}
         onEnd={handleEnd}
+        onEditTime={handleEditTime}
       />
 
       <div style={{ flexGrow: 1, width: '100%', overflowY: 'auto' }}>
