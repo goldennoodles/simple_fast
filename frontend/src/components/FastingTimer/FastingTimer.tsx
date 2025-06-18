@@ -6,6 +6,7 @@ import ActionButton from './ActionButton';
 import EditCurrentFastModal from './EditCurrentFastModal';
 import { parseDuration } from '../../utils/time';
 import { LocalNotifications } from '@capacitor/local-notifications';
+import { useFastingNotifications } from '../../hooks/useFastingNotifications';
 
 interface FastingTimerProps {
     onStart: (startTime: Date, durationSeconds: number) => void;
@@ -29,6 +30,14 @@ const FastingTimer: React.FC<FastingTimerProps & { onEditTime: (field: "start" |
     const [editField, setEditField] = useState<"start" | "end">("start");
     const intervalRef = useRef<number | null>(null);
     const notificationId = 1;
+
+    // Use the fasting notifications hook to handle milestone notifications
+    useFastingNotifications({
+        startTime,
+        fastingDurationSeconds,
+        elapsedSeconds,
+        isFasting,
+    });
 
     function formatDateTime(date: Date) {
         const day = String(date.getDate()).padStart(2, '0');
