@@ -1,7 +1,6 @@
 import React from "react";
 import type { FastingSession } from "../types";
-import { formatDuration } from "../../utils/time";
-
+import { formatTime } from "../../utils/time";
 interface FastingSessionListItemProps {
     session: FastingSession;
     onClick: () => void;
@@ -87,8 +86,8 @@ const FastingSessionListItem: React.FC<FastingSessionListItemProps> = ({
                 <span>
                     {durationSeconds !== null
                         ? session.goalDurationSeconds !== undefined
-                            ? `${formatDuration(durationSeconds)} / ${formatDuration(session.goalDurationSeconds)}`
-                            : formatDuration(durationSeconds)
+                            ? `${formatTime(durationSeconds)} / ${formatTime(session.goalDurationSeconds)}`
+                            : formatTime(durationSeconds)
                         : "In progress"}
                 </span>
             </div>

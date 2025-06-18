@@ -151,7 +151,6 @@ const App: React.FC = () => {
 
     if (field === "start") {
       // Update startTime and keep fasting duration the same
-      const duration = currentFastingDurationSeconds ?? 0;
       setStartTime(newTime);
       // No change to fastingDurationSeconds, so end time changes accordingly
     } else if (field === "end") {
