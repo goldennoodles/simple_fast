@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import EditFastingSessionModal from "./EditFastingSessionModal";
 import type { FastingSession } from "../types";
+import StreakCounter from "./StreakCounter";
 
 interface FastingHistoryProps {
     sessions: FastingSession[];
@@ -39,16 +40,62 @@ const FastingHistory: React.FC<FastingHistoryProps> = ({
         return `${hours}h ${minutes}m`;
     };
 
+    // Helper function to calculate the current streak
+    const calculateStreak = (sessions: FastingSession[]): number => {
+        // Sort sessions by endTime descending (most recent first)
+        const sortedSessions = [...sessions].sort((a, b) => {
+            if (a.endTime === null) return 1; // ongoing sessions last
+            if (b.endTime === null) return -1;
+            return new Date(b.endTime).getTime() - new Date(a.endTime).getTime();
+        });
+
+        let streak = 0;
+        for (const session of sortedSessions) {
+            if (session.endTime === null) {
+                // Ongoing fast, skip
+                continue;
+            }
+            if (session.goalDurationSeconds === undefined) {
+                // No goal set, skip session for streak
+                continue;
+            }
+            const durationSeconds = Math.floor(
+                (new Date(session.endTime).getTime() - new Date(session.startTime).getTime()) / 1000
+            );
+            if (durationSeconds >= session.goalDurationSeconds) {
+                streak++;
+            } else {
+                // Streak breaks if goal not met
+                break;
+            }
+        }
+        return streak;
+    };
+
+    const streak = calculateStreak(sessions);
+
     return (
         <div
             style={{
-                padding: "1rem",
+                position: "relative",
+                padding: "1.2rem 1rem 1rem 1rem",
                 backgroundColor: "#fff",
                 borderRadius: "12px",
                 boxShadow: "0 2px 12px rgba(0,0,0,0.1)",
-                marginTop: "1rem",
+                marginTop: "1.5rem",
             }}
         >
+            <div
+                style={{
+                    position: "absolute",
+                    top: "-22px",
+                    left: "50%",
+                    transform: "translateX(-50%)",
+                    zIndex: 10,
+                }}
+            >
+                <StreakCounter streak={streak} />
+            </div>
             <h2
                 style={{
                     fontWeight: "700",
