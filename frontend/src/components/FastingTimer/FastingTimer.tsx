@@ -173,47 +173,52 @@ const FastingTimer: React.FC<FastingTimerProps & { onEditTime: (field: "start" |
 
             {isFasting && (
                 <>
-                    <div style={{ fontSize: '0.85rem', color: '#888', marginBottom: '0.25rem' }}>
+                    <div style={{ fontSize: '0.85rem', color: '#888', marginBottom: '0.50rem' }}>
                         Goal: {formatGoalDuration(fastingDurationSeconds)}
                     </div>
-                    <div style={{ fontSize: '1rem', color: '#555', marginBottom: '0.5rem' }}>
-                        <span style={{ fontSize: '1.0rem', fontWeight: '600' }}>Start: </span>
-                        {startTime ? formatDateTime(startTime) : '--:--'}{' '}
-                        <button
-                            type="button"
-                            onClick={() => handleEditClick("start")}
-                            style={{
-                                marginLeft: '0.5rem',
-                                fontSize: '0.85rem',
-                                padding: '0.25rem 0.6rem',
-                                cursor: 'pointer',
-                                borderRadius: '4px',
-                                border: '1px solid #2980f3',
-                                backgroundColor: 'white',
-                                color: '#2980f3',
-                            }}
-                        >
-                            Edit
-                        </button>
-                        <br />
-                        <span style={{ fontSize: '1.0rem', fontWeight: '600' }}>End: </span>
-                        {startTime ? formatDateTime(new Date(startTime.getTime() + fastingDurationSeconds * 1000)) : '--:--'}{' '}
-                        <button
-                            type="button"
-                            onClick={() => handleEditClick("end")}
-                            style={{
-                                marginLeft: '0.5rem',
-                                fontSize: '0.85rem',
-                                padding: '0.25rem 0.6rem',
-                                cursor: 'pointer',
-                                borderRadius: '4px',
-                                border: '1px solid #2980f3',
-                                backgroundColor: 'white',
-                                color: '#2980f3',
-                            }}
-                        >
-                            Edit
-                        </button>
+                    <div style={{ fontSize: '1rem', color: '#555', marginBottom: '0.5rem', display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', marginBottom: '0.50rem' }}>
+                            <span style={{ fontSize: '1.0rem', fontWeight: '600' }}>Start: </span>
+                            <span style={{ marginLeft: '0.5rem' }}>{startTime ? formatDateTime(startTime) : '--:--'}</span>
+                            <button
+                                type="button"
+                                onClick={() => handleEditClick("start")}
+                                style={{
+                                    marginLeft: '1rem',
+                                    fontSize: '0.85rem',
+                                    padding: '0.25rem 0.6rem',
+                                    cursor: 'pointer',
+                                    borderRadius: '4px',
+                                    border: '1px solid #2980f3',
+                                    backgroundColor: 'white',
+                                    color: '#2980f3',
+                                    minWidth: '60px',
+                                }}
+                            >
+                                Edit
+                            </button>
+                        </div>
+                        <div style={{ display: 'flex', alignItems: 'center' }}>
+                            <span style={{ fontSize: '1.0rem', fontWeight: '600' }}>End: </span>
+                            <span style={{ marginLeft: '0.5rem' }}>{startTime ? formatDateTime(new Date(startTime.getTime() + fastingDurationSeconds * 1000)) : '--:--'}</span>
+                            <button
+                                type="button"
+                                onClick={() => handleEditClick("end")}
+                                style={{
+                                    marginLeft: '1.43rem',
+                                    fontSize: '0.85rem',
+                                    padding: '0.25rem 0.6rem',
+                                    cursor: 'pointer',
+                                    borderRadius: '4px',
+                                    border: '1px solid #2980f3',
+                                    backgroundColor: 'white',
+                                    color: '#2980f3',
+                                    minWidth: '60px',
+                                }}
+                            >
+                                Edit
+                            </button>
+                        </div>
                     </div>
                 </>
             )}
