@@ -129,7 +129,22 @@ export function useFastingNotifications({
     // }
 
     async function cancelAllNotifications() {
-        await LocalNotifications.cancel({ notifications: [] });
+        // Fetch all scheduled notifications and cancel them by ID
+        try {
+            const { notifications } = await LocalNotifications.getPending();
+            if (notifications && notifications.length > 0) {
+                await LocalNotifications.cancel({
+                    notifications: notifications.map(n => ({ id: n.id })),
+                });
+            } else {
+                // Fallback: cancel all if none found (shouldn't happen, but for safety)
+                await LocalNotifications.cancel({ notifications: [] });
+            }
+        } catch (error) {
+            console.error("Failed to fetch or cancel notifications:", error);
+            // Fallback: try to cancel all
+            await LocalNotifications.cancel({ notifications: [] });
+        }
         sentMilestonesRef.current.clear();
         notificationIdRef.current = 1;
     }

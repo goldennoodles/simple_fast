@@ -5,7 +5,6 @@ import DurationInput from './DurationInput';
 import ActionButton from './ActionButton';
 import EditCurrentFastModal from './EditCurrentFastModal';
 import { parseDuration } from '../../utils/time';
-import { LocalNotifications } from '@capacitor/local-notifications';
 import { useFastingNotifications } from '../../hooks/useFastingNotifications';
 
 interface FastingTimerProps {
@@ -47,47 +46,7 @@ const FastingTimer: React.FC<FastingTimerProps & { onEditTime: (field: "start" |
         return `${day}-${month} ${hours}:${minutes}`;
     }
 
-    async function requestNotificationPermission() {
-        const permission = await LocalNotifications.requestPermissions();
-        if (permission.display === 'granted') {
-            return true;
-        } else {
-            console.warn('Notification permission not granted');
-            return false;
-        }
-    }
 
-    async function scheduleNotification(startTime: Date, durationSeconds: number) {
-        const notifyTime = new Date(startTime.getTime() + durationSeconds * 1000);
-
-        const now = new Date();
-        if (notifyTime <= now) {
-            console.log("Notification time is in the past. Not scheduling notification.");
-            return;
-        }
-
-        console.log("Notify Time Set To:" + notifyTime)
-        await LocalNotifications.schedule({
-            notifications: [
-                {
-                    id: notificationId,
-                    title: 'Fasting Goal Reached!',
-                    body: 'Congratulations, you have met your fasting goal.',
-                    schedule: { at: notifyTime },
-
-                    sound: undefined,
-                    attachments: undefined,
-                    actionTypeId: '',
-                    extra: undefined,
-                },
-            ],
-        });
-    }
-
-    async function cancelNotification() {
-        console.log("Cancelling Notificaiton")
-        await LocalNotifications.cancel({ notifications: [{ id: notificationId }] });
-    }
 
     function formatGoalDuration(seconds: number) {
         const h = Math.floor(seconds / 3600);
@@ -121,18 +80,6 @@ const FastingTimer: React.FC<FastingTimerProps & { onEditTime: (field: "start" |
             }
         };
     }, [isFasting, startTime]);
-
-    useEffect(() => {
-        if (isFasting && startTime && fastingDurationSeconds > 0) {
-            requestNotificationPermission().then((granted) => {
-                if (granted) {
-                    scheduleNotification(startTime, fastingDurationSeconds);
-                }
-            });
-        } else {
-            cancelNotification();
-        }
-    }, [isFasting, startTime, fastingDurationSeconds]);
 
     const handleStartClick = () => {
         const durationSeconds = parseDuration(inputDuration);
