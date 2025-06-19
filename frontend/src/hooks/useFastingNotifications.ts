@@ -16,7 +16,7 @@ interface UseFastingNotificationsParams {
 const milestones: Milestone[] = [
     { percent: 20, message: "20% of the way there! Good Job!" },
     { percent: 50, message: "Wow! You're half way there! Don't give up!" },
-    { percent: 80, message: "You're so close, not long now to go!" },
+    { percent: 80, message: "You're so close, not long to go!" },
     { percent: 100, message: "Congratulations! You've completed your fast!" },
 ];
 
@@ -56,7 +56,7 @@ export function useFastingNotifications({
     async function scheduleMilestoneNotifications() {
         if (!startTime || fastingDurationSeconds <= 0) return;
 
-        console.log(`scheduleMilestoneNotifications called with startTime: ${startTime.toISOString()}, fastingDurationSeconds: ${fastingDurationSeconds}, elapsedSeconds: ${elapsedSeconds}`);
+        console.log(`scheduleMilestoneNotifications called with startTime: ${startTime.toISOString()}, fastingDurationSeconds: ${fastingDurationSeconds}`);
 
         const now = new Date();
         const elapsed = elapsedSeconds;
@@ -114,19 +114,19 @@ export function useFastingNotifications({
         });
     }
 
-    async function scheduleFinalNotification() {
-        if (!startTime || fastingDurationSeconds <= 0) return;
+    // async function scheduleFinalNotification() {
+    //     if (!startTime || fastingDurationSeconds <= 0) return;
 
-        const notifyTime = new Date(startTime.getTime() + fastingDurationSeconds * 1000);
-        const now = new Date();
-        if (notifyTime <= now) {
-            console.log("Notification time is in the past. Not scheduling final notification.");
-            return;
-        }
+    //     const notifyTime = new Date(startTime.getTime() + fastingDurationSeconds * 1000);
+    //     const now = new Date();
+    //     if (notifyTime <= now) {
+    //         console.log("Notification time is in the past. Not scheduling final notification.");
+    //         return;
+    //     }
 
-        // Use the scheduleNotification method from FastingTimer.tsx for the final notification
-        await scheduleNotification(notifyTime, 100, 'Congratulations, you have met your fasting goal.');
-    }
+    //     // Use the scheduleNotification method from FastingTimer.tsx for the final notification
+    //     await scheduleNotification(notifyTime, 100, 'Congratulations, you have met your fasting goal.');
+    // }
 
     async function cancelAllNotifications() {
         await LocalNotifications.cancel({ notifications: [] });
@@ -157,19 +157,16 @@ export function useFastingNotifications({
                 return;
             }
 
-            // Only clear sent milestones and cancel notifications if startTime or fastingDurationSeconds changed (new or edited fast)
+            // Only clear sent milestones and schedule notifications if startTime changed (new or edited fast)
             if (startTime !== prevStartTimeRef.current) {
                 await cancelAllNotifications();
                 sentMilestonesRef.current.clear();
                 console.log('New fast detected, cancelled all notifications and cleared sent milestones.');
                 prevStartTimeRef.current = startTime;
+
+                // Schedule milestone notifications
+                await scheduleMilestoneNotifications();
             }
-
-            // Schedule milestone notifications
-            await scheduleMilestoneNotifications();
-
-            // Schedule final notification
-            await scheduleFinalNotification();
         }
 
         manageNotifications();
